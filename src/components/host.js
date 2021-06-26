@@ -5,7 +5,7 @@ const Host=({video})=>{
     const nextCanvasref = useRef(null);
     // const resCanvasRef = useRef(null);
     const [move, setMove] = useState(false);
-    const IMAGE_SCORE_THRESHOLD = 0.56;
+    const IMAGE_SCORE_THRESHOLD = 0.55;
     var ctx , ctx2;
 
     const capture=(ctx, enableDetect = false)=>{
