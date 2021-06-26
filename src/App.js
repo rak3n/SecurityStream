@@ -7,7 +7,7 @@ function App() {
 
   useEffect(()=>{
     if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480, facingMode:'environment'}})
+      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480, facingMode:{exact:'environment'}}})
         .then(function (stream) {
           videoRef.current.srcObject = stream;
           videoRef.current.play()
