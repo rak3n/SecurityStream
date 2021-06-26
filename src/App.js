@@ -7,14 +7,14 @@ function App() {
 
   useEffect(()=>{
     if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480} })
+      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480}})
         .then(function (stream) {
           videoRef.current.srcObject = stream;
           videoRef.current.play()
           initiateDropDown()
         })
         .catch(function (err0r) {
-          console.log("Something went wrong!");
+          console.log("Something went wrong!",err0r);
           alert("Browser issue or something went wrong!!!!")
         });
     }
@@ -25,7 +25,7 @@ function App() {
     .then(res=>{
       var tmp=[];
       for(var i=0;i<res.length;i++){
-          if(res[i].kind === "videoinput" && res[i].deviceId){
+          if(res[i].kind === "videoinput"){
             tmp.push(res[i]);
           }
       }
