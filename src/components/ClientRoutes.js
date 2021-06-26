@@ -42,7 +42,7 @@ const ClientRoute=({peer})=>{
     }
 
     useEffect(()=>{
-        navigator.mediaDevices.getUserMedia({video: false, audio: true}).then(stream=> {
+        navigator.mediaDevices.getUserMedia({video: true, audio: true}).then(stream=> {
             setStream(stream);
             // videoRef.current.srcObject = stream;
             // videoRef.current.play();
