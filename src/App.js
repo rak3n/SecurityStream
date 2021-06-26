@@ -1,80 +1,45 @@
-import {useRef, useState, useEffect} from 'react';
-import Host from './components/host';
+import {useState, useEffect} from 'react';
+import HostRoute from './components/HostRouter';
+import ClientRoute from './components/ClientRoutes';
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import Peer from 'peerjs';
+import "./App.css";
 
 function App() {
-  const videoRef = useRef(null)
-  const [cameras, setCameras] = useState([])
+  const [peer, setPeer] = useState(null)
+
 
   useEffect(()=>{
-    if (navigator.mediaDevices.getUserMedia) {
-      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480, facingMode:{exact:'environment'}}})
-        .then(function (stream) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play()
-          initiateDropDown()
-        })
-        .catch(function (err0r) {
-          console.log("Something went wrong!",err0r);
-          alert("Browser issue or something went wrong!!!!")
-        });
-    }
-  },[])
-
-  const initiateDropDown=async()=>{
-    await navigator.mediaDevices.enumerateDevices()
-    .then(res=>{
-      var tmp=[];
-      for(var i=0;i<res.length;i++){
-          if(res[i].kind === "videoinput"){
-            tmp.push(res[i]);
-          }
-      }
-      setCameras(tmp);
-    })
-    .catch(err=>{
-      console.log("Error in render");
-    })
-  }
-
-  const selectCamera=(e)=>{
-    if (navigator.mediaDevices.getUserMedia) {
-
-      navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480, deviceId: e.target.value} })
-        .then(function (stream) {
-          videoRef.current.pause()
-          videoRef.current.srcObject = stream;
-          videoRef.current.play()
-          initiateDropDown()
-        })
-        .catch(function (err0r) {
-          console.log("Something went wrong!" + err0r);
-          alert("Browser issue or something went wrong!!!!")
-        });
-    }
-  }
-
-  const generateOptions = cameras.map(itm=>{
-    return(
-      <>
-      <option value={itm.deviceId}>{itm.label}</option>
-      </>
-    );
-  })
-
-  return (
-    <div style={{width:'100%', flexDirection:'column', display:'flex', alignItems:'center', justifyContent:'center'}}>
-      <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
+    var peer = new Peer()
+    setPeer(peer);
+  }, [])
+  return(
+    <>
       {
-        cameras.length>0?
-          <select onChange={selectCamera}>
-            {generateOptions}
-          </select>
-        :
-          null
+        peer!==null?
+        <Router>
+        <Switch>
+          <Route exact path="/host">
+            <HostRoute peer={peer}/>
+          </Route>
+
+          <Route exact path="/client">
+            <ClientRoute peer={peer}/>
+          </Route>
+
+          <Route path="*">
+              <div style={{width:'100vw', height:'100vh', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                <a href="/host" className="appRoutes">HOST</a>
+                <a href="/client" className="appRoutes">CLIENT</a>
+              </div>
+          </Route>
+        </Switch>
+      </Router>
+      :
+        "Loading...."
       }
-      <Host video={videoRef}/>
-    </div>
-  );
+    </>
+  )
 }
 
 export default App;
