@@ -7,7 +7,7 @@ const HostRoute=({peer})=>{
   const [shouldTrack, setShouldTrack] = useState(true);
   const [cameras, setCameras] = useState([])
   const [isCopied, setIsCopied] = useState(false);
-  var counter=0;
+  var counter=new Set();
   
   const OnlyListenCall=(stream)=>{
       console.log(peer.id);
@@ -19,33 +19,34 @@ const HostRoute=({peer})=>{
         })
 
         peer.on('connection', conn=>{
-            counter+=1;
-            console.log(counter+' online')
+            counter.add(conn.id);
+            console.log(counter.size+' online')
             conn.on('data', data=>{
                 console.log('new message', data);
-                if(data=='disconnected'){
-                  counter-=1
-                  console.log(counter+' online')
-                  if(counter<1){
-                      setShouldTrack(true);
-                  }
-                }
                 if(data.shouldTrack!==undefined)
                     {setShouldTrack(data.shouldTrack);}
-                if(data.shouldTrack===undefined){
+                if(data.shouldTrack===undefined && data!=='disconnected'){
                     setShouldTrack(false);
+                }
+                if(data==='disconnected'){
+                  counter.delete(conn.id);
+                  console.log(counter.size+' online')
+                  if(counter.size<1){
+                      counter=new Set();
+                      setShouldTrack(true);
+                  }
                 }
                 conn.send('Ok')
             })
         })
 
-        peer.on('disconnected', ()=>{
-          counter-=1
-          console.log(counter+' online')
-          if(counter<1){
-            setShouldTrack(true);
-          }
-        })
+        // peer.on('disconnected', ()=>{
+        //   counter.1
+        //   console.log(counter.values()+' online')
+        //   if(counter.size<1){
+        //     setShouldTrack(true);
+        //   }
+        // })
   }
 
   useEffect(()=>{

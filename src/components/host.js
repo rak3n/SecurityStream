@@ -1,17 +1,26 @@
 import {useRef, useEffect, useState} from 'react';
+import useSound from 'use-sound';
+import sound from '../assets/alert.mp3';
 
 const Host=({video})=>{
     const canvasRef = useRef(null);
     const nextCanvasref = useRef(null);
+    // const [stopTracksetStopTrack] = useState(false);
+    var stopTrack = false;
     // const resCanvasRef = useRef(null);
     const [move, setMove] = useState(false);
+    const [play, {stop}]  = useSound(sound,{
+        interrupt:true
+    });
     const IMAGE_SCORE_THRESHOLD = 0.55;
     var ctx , ctx2;
 
     const capture=(ctx, enableDetect = false)=>{
+        if(stopTrack===false){
         ctx.drawImage(video.current, 0, 0, 640, 480);
         if(enableDetect){
             detectMotion()
+        }
         }
     }
 
@@ -54,7 +63,15 @@ const Host=({video})=>{
 
     const actionOnMotion = ()=>{
         console.log("MOVEMENT");
+        stopTrack=true;
         setMove(true);
+        // setStopTrack(true);
+        setTimeout(()=>{
+            // setMove(false);
+            // setStopTrack(false);
+            stopTrack=false;
+            setMove(false);
+        }, 20000);
     } 
 
     useEffect(()=>{
@@ -76,7 +93,7 @@ const Host=({video})=>{
         <div style={{display:'flex', alignItems:'center', flexWrap:'wrap'}}>
             <canvas ref={canvasRef} style={{display:'none'}} ></canvas>
             <canvas ref={nextCanvasref} style={{display:'none'}} />
-            {/* <canvas ref={resCanvasRef}/> */}
+        
             <div style={{fontSize:'18px'}}>
                 Is Movement:
                 <span style={{fontSize:'22px', color:move?"green":"red", fontWeight:'bold'}}>
@@ -88,6 +105,13 @@ const Host=({video})=>{
                     }
                 </span>
             </div>
+
+            {
+                move?
+                    <><span>playing{play()}</span></>
+                :
+                    stop()
+            }
             
         </div>
     )

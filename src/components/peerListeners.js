@@ -1,8 +1,19 @@
 
-class PeerConnecter{
-    constructor(peer){
-        console.log(peer);
-    }
-};
+// class PeerConnecter{
+//     peer;
+//     call;
+//     constructor(peer){
+//         console.log(peer);
+//         this.peer=peer
+//     }
 
-export default PeerConnecter;
+//     makeCall=(Id, stream)=>{
+//         this.call = this.peer.call(Id, stream);
+//     }
+
+//     this.call.on('call',cll=>{
+//         cll.answer()
+//     });
+// };
+
+// export default PeerConnecter;

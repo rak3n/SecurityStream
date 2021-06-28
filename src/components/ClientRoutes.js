@@ -10,12 +10,9 @@ const ClientRoute=({peer})=>{
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
 
-    useWindowUnloadEffect(()=>{
-        conn.send('disconnected');
-        peer.disconnect();
-        peer.destroy();
-        console.log('unload');
-    })
+    // useWindowUnloadEffect(()=>{
+        
+    // })
 
     const hostId= useParams();
 
@@ -74,7 +71,21 @@ const ClientRoute=({peer})=>{
         }).catch(err=>{
             console.log(err);
         }); 
+        window.onbeforeunload =()=>{
+            conn.send('disconnected');
+            peer.disconnect();
+            peer.destroy();
+            console.log('unload');
+        }
 
+        return ()=>{
+            window.onbeforeunload =()=>{
+                conn.send('disconnected');
+                peer.disconnect();
+                peer.destroy();
+                console.log('unload');
+            }
+        }
     }, []);
 
     const handleID =(e)=>{
