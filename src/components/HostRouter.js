@@ -1,12 +1,10 @@
 import {useRef, useState, useEffect} from 'react';
-import PeerConnecter from './peerListeners';
 import Host from './host';
 
 const HostRoute=({peer})=>{
   const videoRef = useRef(null)
   const [shouldTrack, setShouldTrack] = useState(true);
   const [cameras, setCameras] = useState([])
-  const [stream , setStream] = useState();
   const [isCopied, setIsCopied] = useState(false);
   var counter=new Set();
   
@@ -92,7 +90,7 @@ const HostRoute=({peer})=>{
           videoRef.current.srcObject = stream;
           videoRef.current.play()
           initiateDropDown()
-          OnlyListenCall(stream)
+          OnlyListenCall(stream);
         })
         .catch(function (err0r) {
           console.log("Something went wrong!" + err0r);
@@ -105,6 +103,7 @@ const HostRoute=({peer})=>{
     return(
       <>
       <option key={idx} value={itm.deviceId}>{itm.label}</option>
+      {/* <option key={idx=1} value={itm.deviceId}>{itm.label}</option> */}
       </>
     );
   })
@@ -143,7 +142,7 @@ const HostRoute=({peer})=>{
       <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
 
       {
-        cameras.length>1?
+        cameras.length>0?
           <select onChange={selectCamera}>
             {generateOptions}
           </select>
