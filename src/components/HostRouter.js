@@ -6,26 +6,45 @@ const HostRoute=({peer})=>{
   const videoRef = useRef(null)
   const [shouldTrack, setShouldTrack] = useState(true);
   const [cameras, setCameras] = useState([])
+  const [isCopied, setIsCopied] = useState(false);
+  var counter=0;
   
   const OnlyListenCall=(stream)=>{
       console.log(peer.id);
 
       peer.on('call', call=>{
           console.log('connect Req');
-            console.log(call, stream);
-            call.answer(stream);
+            console.log(call, videoRef.current.srcObject);
+            call.answer(videoRef.current.srcObject);
         })
 
         peer.on('connection', conn=>{
+            counter+=1;
+            console.log(counter+' online')
             conn.on('data', data=>{
                 console.log('new message', data);
+                if(data=='disconnected'){
+                  counter-=1
+                  console.log(counter+' online')
+                  if(counter<1){
+                      setShouldTrack(true);
+                  }
+                }
                 if(data.shouldTrack!==undefined)
                     {setShouldTrack(data.shouldTrack);}
                 if(data.shouldTrack===undefined){
-                    setShouldTrack(true);
+                    setShouldTrack(false);
                 }
                 conn.send('Ok')
             })
+        })
+
+        peer.on('disconnected', ()=>{
+          counter-=1
+          console.log(counter+' online')
+          if(counter<1){
+            setShouldTrack(true);
+          }
         })
   }
 
@@ -86,9 +105,32 @@ const HostRoute=({peer})=>{
     );
   })
 
+  const copyToClipboard = str => {
+    const el = document.createElement('textarea');
+    el.value = str;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+  };
+
+  const handleCopyLink=()=>{
+    setIsCopied(true);
+    copyToClipboard(window.origin+"/client/"+peer.id);
+    setTimeout(()=>{
+      setIsCopied(false);
+    }, 1000);
+  }
+
   return (
     <div style={{width:'100%', flexDirection:'column', display:'flex', alignItems:'center', justifyContent:'center'}}>
         <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
+        {
+          peer.id?
+            <span style={{padding:'10px 5px', background:'black', color:'white', fontSize:'13px', cursor:'pointer'}} onClick={handleCopyLink}>Share a direct Link</span>
+          :
+            null
+        }
       <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
       {
         cameras.length>0?
@@ -103,6 +145,18 @@ const HostRoute=({peer})=>{
             <Host video={videoRef}/>
           :
             null  
+      }
+
+      {
+        isCopied?
+          <div style={{position:'fixed', top:50, right:'10%'}}>
+            <span style={{background:'rgba(0,0,0,0.6)', padding:'5px 5px', color:'white', borderRadius:'5px', textAlign:'center', whiteSpace:'nowrap'}}>
+              Link Copied, Share it to join.
+            </span>
+            
+          </div>
+        :
+          null
       }
     </div>
   );

@@ -1,17 +1,36 @@
 import {useRef, useState, useEffect, useCallback} from 'react';
 import './Client.css';
+import {useParams} from 'react-router-dom';
+import useWindowUnloadEffect from './hooks/reloadCheck';
 
 const ClientRoute=({peer})=>{
     const [id, setId] = useState('');
     const [connection, setConnection] = useState(false);
-    const [trackStatus, setTrackStatus] = useState(true);
+    const [trackStatus, setTrackStatus] = useState(false);
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
+
+    useWindowUnloadEffect(()=>{
+        conn.send('disconnected');
+        peer.disconnect();
+        peer.destroy();
+        console.log('unload');
+    })
+
+    const hostId= useParams();
+
+    console.log(hostId);
     var conn
 
-    const makeCall=(id) => {
-        
-        var call = peer.call(id, stream)
+    const makeCall=(id, strm=false) => {
+        var call;
+        if(strm!==false){
+            call = peer.call(id, strm)   
+            console.log(strm)
+        }else{
+            call = peer.call(id, stream)
+            console.log(stream)
+        }
         console.log(videoRef);
         call.on('stream', (streamRec)=>{
             console.log('hello', streamRec);
@@ -33,7 +52,7 @@ const ClientRoute=({peer})=>{
                 console.log(data);
               });
             if(message==false)
-                {conn.send('New Connection'); setTrackStatus(true);}
+                {conn.send('New Connection'); setTrackStatus(false);}
             else
                 conn.send(message);
         },err=>{
@@ -46,9 +65,16 @@ const ClientRoute=({peer})=>{
             setStream(stream);
             // videoRef.current.srcObject = stream;
             // videoRef.current.play();
+            if(hostId.id){
+                    setId(hostId.id);
+                    setTimeout(()=>{
+                        makeCall(hostId.id, stream);
+                    }, 2000)    
+            }
         }).catch(err=>{
             console.log(err);
         }); 
+
     }, []);
 
     const handleID =(e)=>{

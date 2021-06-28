@@ -23,6 +23,10 @@ function App() {
             <HostRoute peer={peer}/>
           </Route>
 
+          <Route exact path="/client/:id">
+            <ClientRoute peer={peer}/>
+          </Route>
+
           <Route exact path="/client">
             <ClientRoute peer={peer}/>
           </Route>
