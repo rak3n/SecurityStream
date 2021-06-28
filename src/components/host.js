@@ -86,6 +86,7 @@ const Host=({video})=>{
         return()=>{
             clearInterval(int);
             clearInterval(int2);
+            stop();
         }
     },[]);
 
