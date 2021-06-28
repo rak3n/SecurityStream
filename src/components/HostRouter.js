@@ -133,6 +133,17 @@ const HostRoute=({peer})=>{
           :
             null
         }
+        {
+        isCopied?
+          <div style={{position:'fixed', top:50, right:'10%'}}>
+            <span style={{background:'rgba(0,0,0,0.6)', padding:'5px 5px', color:'white', borderRadius:'5px', textAlign:'center', whiteSpace:'nowrap'}}>
+              Link Copied, Share it to join.
+            </span>
+            
+          </div>
+        :
+          null
+      }
       {
           shouldTrack?
             <Host video={videoRef}/>
@@ -152,17 +163,7 @@ const HostRoute=({peer})=>{
       
       <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
 
-      {
-        isCopied?
-          <div style={{position:'fixed', top:50, right:'10%'}}>
-            <span style={{background:'rgba(0,0,0,0.6)', padding:'5px 5px', color:'white', borderRadius:'5px', textAlign:'center', whiteSpace:'nowrap'}}>
-              Link Copied, Share it to join.
-            </span>
-            
-          </div>
-        :
-          null
-      }
+      
     </div>
   );
 }
