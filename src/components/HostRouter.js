@@ -6,15 +6,15 @@ const HostRoute=({peer})=>{
   const [shouldTrack, setShouldTrack] = useState(true);
   const [cameras, setCameras] = useState([])
   const [isCopied, setIsCopied] = useState(false);
+  var gStream;
   var counter=new Set();
   
-  const OnlyListenCall=(stream)=>{
+  const OnlyListenCall=()=>{
         // console.log(peer.id);
-
         peer.on('call', call=>{
           console.log('connect Req');
-          console.log(call, stream);
-          call.answer(stream);
+          console.log(call, gStream);
+          call.answer(gStream);
         })
 
         peer.on('connection', conn=>{
@@ -54,9 +54,10 @@ const HostRoute=({peer})=>{
       navigator.mediaDevices.getUserMedia({ video: {width: 640, height: 480}})
         .then(function (stream) {
           videoRef.current.srcObject = stream;
+          gStream=stream;
           videoRef.current.play()
           initiateDropDown()
-          OnlyListenCall(stream)
+          OnlyListenCall()
         })
         .catch(function (err0r) {
           console.log("Something went wrong!",err0r);
@@ -90,7 +91,7 @@ const HostRoute=({peer})=>{
           videoRef.current.srcObject = stream;
           videoRef.current.play()
           initiateDropDown()
-          OnlyListenCall(stream);
+          gStream=stream;
         })
         .catch(function (err0r) {
           console.log("Something went wrong!" + err0r);
@@ -103,7 +104,7 @@ const HostRoute=({peer})=>{
     return(
       <>
       <option key={idx} value={itm.deviceId}>{itm.label}</option>
-      {/* <option key={idx=1} value={itm.deviceId}>{itm.label}</option> */}
+      <option key={idx=1} value={itm.deviceId}>{itm.label}</option>
       </>
     );
   })
@@ -160,10 +161,7 @@ const HostRoute=({peer})=>{
         :
           null
       } */}
-      
       <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
-
-      
     </div>
   );
 }

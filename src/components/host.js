@@ -71,7 +71,7 @@ const Host=({video})=>{
             // setStopTrack(false);
             stopTrack=false;
             setMove(false);
-        }, 90000);
+        }, 45000);
     } 
 
     useEffect(()=>{
