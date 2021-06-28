@@ -1,7 +1,6 @@
 import {useRef, useState, useEffect, useCallback} from 'react';
 import './Client.css';
 import {useParams} from 'react-router-dom';
-import useWindowUnloadEffect from './hooks/reloadCheck';
 
 const ClientRoute=({peer})=>{
     const [id, setId] = useState('');
@@ -15,8 +14,6 @@ const ClientRoute=({peer})=>{
     // })
 
     const hostId= useParams();
-
-    console.log(hostId);
     var conn
 
     const makeCall=(id, strm=false) => {
@@ -43,7 +40,7 @@ const ClientRoute=({peer})=>{
 
     const sendRecieveData=(id, message=false)=>{
         conn = peer.connect(id);
-        
+        console.log(peer.id);
         conn.on('open', ()=>{
             conn.on('data', (data) => {
                 console.log(data);
@@ -109,10 +106,13 @@ const ClientRoute=({peer})=>{
             <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
             {
                 connection?
+                <>
+                    <span>Track Movement:</span>
                     <label className="switch" >
                         <input type="checkbox" checked={trackStatus} onClick={handleStatus}/>
                         <span className="slider round"></span>
                     </label>
+                </>
                 :
                     null
             }

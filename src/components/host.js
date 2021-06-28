@@ -71,7 +71,7 @@ const Host=({video})=>{
             // setStopTrack(false);
             stopTrack=false;
             setMove(false);
-        }, 20000);
+        }, 90000);
     } 
 
     useEffect(()=>{
@@ -91,9 +91,6 @@ const Host=({video})=>{
 
     return(
         <div style={{display:'flex', alignItems:'center', flexWrap:'wrap'}}>
-            <canvas ref={canvasRef} style={{display:'none'}} ></canvas>
-            <canvas ref={nextCanvasref} style={{display:'none'}} />
-        
             <div style={{fontSize:'18px'}}>
                 Is Movement:
                 <span style={{fontSize:'22px', color:move?"green":"red", fontWeight:'bold'}}>
@@ -108,11 +105,12 @@ const Host=({video})=>{
 
             {
                 move?
-                    <><span>playing{play()}</span></>
+                    <><span>( Tracking Paused ){play()}</span></>
                 :
                     stop()
             }
-            
+            <canvas ref={canvasRef} style={{display:'none'}} ></canvas>
+            <canvas ref={nextCanvasref} style={{display:'none'}} />            
         </div>
     )
 }

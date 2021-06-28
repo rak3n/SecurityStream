@@ -10,16 +10,17 @@ const HostRoute=({peer})=>{
   var counter=new Set();
   
   const OnlyListenCall=(stream)=>{
-      console.log(peer.id);
+        // console.log(peer.id);
 
-      peer.on('call', call=>{
+        peer.on('call', call=>{
           console.log('connect Req');
-            console.log(call, videoRef.current.srcObject);
-            call.answer(videoRef.current.srcObject);
+          console.log(call, stream);
+          call.answer(stream);
         })
 
         peer.on('connection', conn=>{
-            counter.add(conn.id);
+            counter.add(conn.peer);
+            console.log(conn);
             console.log(counter.size+' online')
             conn.on('data', data=>{
                 console.log('new message', data);
@@ -29,7 +30,7 @@ const HostRoute=({peer})=>{
                     setShouldTrack(false);
                 }
                 if(data==='disconnected'){
-                  counter.delete(conn.id);
+                  counter.delete(conn.peer);
                   console.log(counter.size+' online')
                   if(counter.size<1){
                       counter=new Set();
@@ -125,28 +126,30 @@ const HostRoute=({peer})=>{
 
   return (
     <div style={{width:'100%', flexDirection:'column', display:'flex', alignItems:'center', justifyContent:'center'}}>
-        <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
         {
           peer.id?
-            <span style={{padding:'10px 5px', background:'black', color:'white', fontSize:'13px', cursor:'pointer'}} onClick={handleCopyLink}>Share a direct Link</span>
+            <span style={{padding:'10px 5px', marginTop:'10px', marginBottom:'10px', background:'black', color:'white', fontSize:'13px', cursor:'pointer'}} onClick={handleCopyLink}>Share a direct Link</span>
           :
             null
         }
-      <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
-      {
-        cameras.length>0?
-          <select onChange={selectCamera}>
-            {generateOptions}
-          </select>
-        :
-          null
-      }
       {
           shouldTrack?
             <Host video={videoRef}/>
           :
             null  
       }
+      <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
+
+      {
+        cameras.length>1?
+          <select onChange={selectCamera}>
+            {generateOptions}
+          </select>
+        :
+          null
+      }
+      
+      <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
 
       {
         isCopied?
