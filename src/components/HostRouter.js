@@ -6,6 +6,7 @@ const HostRoute=({peer})=>{
   const videoRef = useRef(null)
   const [shouldTrack, setShouldTrack] = useState(true);
   const [cameras, setCameras] = useState([])
+  const [stream , setStream] = useState();
   const [isCopied, setIsCopied] = useState(false);
   var counter=new Set();
   
@@ -91,6 +92,7 @@ const HostRoute=({peer})=>{
           videoRef.current.srcObject = stream;
           videoRef.current.play()
           initiateDropDown()
+          OnlyListenCall(stream)
         })
         .catch(function (err0r) {
           console.log("Something went wrong!" + err0r);
@@ -99,10 +101,10 @@ const HostRoute=({peer})=>{
     }
   }
 
-  const generateOptions = cameras.map(itm=>{
+  const generateOptions = cameras.map((itm, idx)=>{
     return(
       <>
-      <option value={itm.deviceId}>{itm.label}</option>
+      <option key={idx} value={itm.deviceId}>{itm.label}</option>
       </>
     );
   })
