@@ -141,14 +141,14 @@ const HostRoute=({peer})=>{
       }
       <video ref={videoRef} style={{width:'500px', margin:'16px'}}></video>
 
-      {
+      {/* {
         cameras.length>0?
           <select onChange={selectCamera}>
             {generateOptions}
           </select>
         :
           null
-      }
+      } */}
       
       <span style={{margin:'16px', fontWeight:'bold'}}>Host Id: {peer.id}</span>
 
